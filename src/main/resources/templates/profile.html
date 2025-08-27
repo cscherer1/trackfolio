@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile • Track-Folio</title>
+</head>
+<body>
+<nav>
+    <a th:href="@{/}">Home</a> |
+    <a th:href="@{/profile}">Profile</a> |
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit">Log out</button>
+    </form>
+</nav>
+
+<h1>My Profile</h1>
+
+<dl>
+    <dt>Email</dt>
+    <dd th:text="${user.email}">email@example.com</dd>
+
+    <dt>Display name</dt>
+    <dd th:text="${user.displayName}">Admin</dd>
+
+    <dt>Role</dt>
+    <dd th:text="${user.role}">ROLE_USER</dd>
+
+    <dt>Created</dt>
+    <dd th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">2025-08-26</dd>
+
+    <dt>Updated</dt>
+    <dd th:text="${#temporals.format(user.updatedAt, 'yyyy-MM-dd HH:mm')}">2025-08-26</dd>
+</dl>
+</body>
+</html>

@@ -16,15 +16,16 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**")) // not needed now, harmless
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/login",
+                                "/login",           // Spring’s default login page
+                                "/signup",          // our new signup page
                                 "/css/**", "/js/**", "/images/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults())   // <- use Spring’s built-in login page for now
+                .formLogin(Customizer.withDefaults())
                 .logout(Customizer.withDefaults());
 
         return http.build();
