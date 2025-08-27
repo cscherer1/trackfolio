@@ -1,7 +1,5 @@
-package com.scherer.trackfolio.web;
+package com.scherer.trackfolio.user;
 
-import com.scherer.trackfolio.user.User;
-import com.scherer.trackfolio.user.UserRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
