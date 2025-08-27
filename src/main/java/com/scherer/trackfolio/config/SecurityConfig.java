@@ -19,14 +19,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
                 .authorizeHttpRequests(auth -> auth
                         // make these PUBLIC explicitly (match both GET and POST)
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/signup").permitAll()
-                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/").permitAll() //Public Landing Page
+                        .requestMatchers("/login").permitAll() //Spring default login page
+                        .requestMatchers("/signup").permitAll() //Custom signup page
+                        .requestMatchers("/error").permitAll() //Error page
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         // everything else requires auth
                         .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/login")          // still use Spring's login for now
+                        .defaultSuccessUrl("/", true)  // 👈 force redirect after login
+                        .permitAll()
+                )
                 .logout(Customizer.withDefaults());
 
         return http.build();

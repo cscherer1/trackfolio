@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Track-Folio</title>
+</head>
+<body>
+<header>
+    <h1>Welcome to Track-Folio</h1>
+    <p>Your simple, open-source tracker for projects and job applications.</p>
+    <nav>
+        <!-- Shown if NOT logged in -->
+        <div sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">Log in</a> |
+            <a th:href="@{/signup}">Sign up</a>
+        </div>
+
+        <!-- Shown if logged in -->
+        <div sec:authorize="isAuthenticated()">
+            <p>Welcome, <span th:text="${currentUser.displayName} ?: ${currentUser.email}">you</span>!</p>
+            <a th:href="@{/}">Dashboard</a> |
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit">Log out</button>
+            </form>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <h2>What is Track-Folio?</h2>
+        <p>
+            Track-Folio helps you stay organized. Start by tracking projects, then
+            expand into monitoring your job applications — all in one place.
+        </p>
+    </section>
+
+    <section>
+        <h2>Get started</h2>
+        <p>
+            <a th:href="@{/signup}">Create your free account</a> and take control of your workflow.
+        </p>
+    </section>
+</main>
+</body>
+</html>
