@@ -18,11 +18,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/login",           // Spring’s default login page
-                                "/signup",          // our new signup page
-                                "/css/**", "/js/**", "/images/**"
-                        ).permitAll()
+                        // make these PUBLIC explicitly (match both GET and POST)
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/signup").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        // everything else requires auth
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())

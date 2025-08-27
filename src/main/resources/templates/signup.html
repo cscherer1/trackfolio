@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up • Track-Folio</title>
+</head>
+<body>
+<h1>Create your account</h1>
+
+<form th:action="@{/signup}" method="post" th:object="${form}">
+    <div>
+        <label>Email</label><br>
+        <input type="email" th:field="*{email}" required>
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color:red"></div>
+    </div>
+
+    <div>
+        <label>Display name (optional)</label><br>
+        <input type="text" th:field="*{displayName}" maxlength="100">
+        <div th:if="${#fields.hasErrors('displayName')}" th:errors="*{displayName}" style="color:red"></div>
+    </div>
+
+    <div>
+        <label>Password</label><br>
+        <input type="password" th:field="*{password}" minlength="8" required>
+        <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red"></div>
+    </div>
+
+    <div>
+        <label>Confirm password</label><br>
+        <input type="password" th:field="*{confirmPassword}" minlength="8" required>
+        <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" style="color:red"></div>
+    </div>
+
+    <button type="submit">Create account</button>
+</form>
+
+<p>Already have an account? <a th:href="@{/login}">Log in</a></p>
+</body>
+</html>
