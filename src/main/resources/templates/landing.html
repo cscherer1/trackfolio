@@ -1,47 +1,102 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Track-Folio</title>
-</head>
-<body>
-<header>
-    <h1>Welcome to Track-Folio</h1>
-    <p>Your simple, open-source tracker for projects and job applications.</p>
-    <nav>
-        <!-- Shown if NOT logged in -->
-        <div sec:authorize="isAnonymous()">
-            <a th:href="@{/login}">Log in</a> |
-            <a th:href="@{/signup}">Sign up</a>
-        </div>
 
-        <!-- Shown if logged in -->
-        <div sec:authorize="isAuthenticated()">
-            <p>Welcome, <span th:text="${currentUser.displayName} ?: ${currentUser.email}">you</span>!</p>
-            <a th:href="@{/}">Dashboard</a> |
-            <form th:action="@{/logout}" method="post" style="display:inline;">
-                <button type="submit">Log out</button>
+    <!-- Tailwind (Play CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              container: { center: true, padding: '1rem' }
+            }
+          }
+        }
+    </script>
+</head>
+
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="border-b bg-white/70 backdrop-blur">
+    <div class="container flex items-center justify-between py-4">
+        <a th:href="@{/}" class="flex items-center gap-2 font-semibold text-indigo-700">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10.012 10.012 0 0 0 12 2Zm1 14.93V20h-2v-3.07A8.017 8.017 0 0 1 4.07 13H1v-2h3.07A8.017 8.017 0 0 1 11 4.07V1h2v3.07A8.017 8.017 0 0 1 19.93 11H23v2h-3.07A8.017 8.017 0 0 1 13 16.93Z"/></svg>
+            <span>Track-Folio</span>
+        </a>
+
+        <!-- Nav (anonymous) -->
+        <nav class="flex items-center gap-3" sec:authorize="isAnonymous()">
+            <a th:href="@{/login}" class="px-4 py-2 rounded border border-slate-300 hover:bg-slate-100">Log in</a>
+            <a th:href="@{/signup}" class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">Sign up</a>
+        </nav>
+
+        <!-- Nav (authenticated) -->
+        <nav class="flex items-center gap-3" sec:authorize="isAuthenticated()">
+            <a th:href="@{/}" class="px-4 py-2 rounded border border-slate-300 hover:bg-slate-100">Dashboard</a>
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="px-4 py-2 rounded bg-slate-800 text-white hover:bg-slate-900">Log out</button>
             </form>
-        </div>
-    </nav>
+        </nav>
+    </div>
 </header>
 
-<main>
-    <section>
-        <h2>What is Track-Folio?</h2>
-        <p>
-            Track-Folio helps you stay organized. Start by tracking projects, then
-            expand into monitoring your job applications — all in one place.
-        </p>
+<!-- Hero / top section -->
+<main class="container flex-1">
+    <!-- Authenticated greeting -->
+    <section sec:authorize="isAuthenticated()" class="py-10">
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight">
+            Welcome, <span class="text-indigo-700" th:text="${currentUser?.displayName} ?: ${currentUser?.email}">there</span> 👋
+        </h1>
+        <p class="mt-2 text-slate-600">Jump back into your tracker, or add a new application.</p>
+
+        <div class="mt-6 flex flex-wrap gap-3">
+            <a th:href="@{/applications}" class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">View applications</a>
+            <a th:href="@{/applications/new}" class="px-4 py-2 rounded border border-indigo-200 text-indigo-700 hover:bg-indigo-50">Add application</a>
+        </div>
     </section>
 
-    <section>
-        <h2>Get started</h2>
-        <p>
-            <a th:href="@{/signup}">Create your free account</a> and take control of your workflow.
-        </p>
+    <!-- Anonymous marketing pitch -->
+    <section sec:authorize="isAnonymous()" class="py-14">
+        <div class="max-w-3xl">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">Organize your job hunt — simply.</h1>
+            <p class="mt-4 text-lg text-slate-600">
+                Track applications, interviews, and offers. Soon: auto-ingest from email and a résumé generator—
+                all in one open-source app.
+            </p>
+            <div class="mt-6 flex gap-3">
+                <a th:href="@{/signup}" class="px-5 py-3 rounded bg-indigo-600 text-white hover:bg-indigo-700">Get started free</a>
+                <a th:href="@{/login}" class="px-5 py-3 rounded border border-slate-300 hover:bg-slate-100">I already have an account</a>
+            </div>
+        </div>
+
+        <div class="mt-12 grid md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-xl p-6 shadow-sm border">
+                <h3 class="font-semibold">Track everything</h3>
+                <p class="mt-2 text-sm text-slate-600">Company, role, status, dates, links, and notes — all tidy.</p>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border">
+                <h3 class="font-semibold">Email ingestion (soon)</h3>
+                <p class="mt-2 text-sm text-slate-600">Auto-capture “Thanks for applying” emails into your pipeline.</p>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border">
+                <h3 class="font-semibold">Résumé builder (soon)</h3>
+                <p class="mt-2 text-sm text-slate-600">Generate tailored résumés from your profile and target roles.</p>
+            </div>
+        </div>
     </section>
 </main>
+
+<!-- Footer -->
+<footer class="mt-10 border-t">
+    <div class="container py-6 text-sm text-slate-500 flex items-center justify-between">
+        <p>&copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Track-Folio</p>
+        <p>Made with Spring Boot & Postgres</p>
+    </div>
+</footer>
 </body>
 </html>

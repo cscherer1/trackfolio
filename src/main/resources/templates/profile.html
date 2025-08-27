@@ -1,35 +1,69 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Profile • Track-Folio</title>
+    <meta charset="UTF-8" />
+    <title>My Profile • Track-Folio</title>
+
+    <!-- Tailwind (Play CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<nav>
-    <a th:href="@{/}">Home</a> |
-    <a th:href="@{/profile}">Profile</a> |
-    <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit">Log out</button>
-    </form>
-</nav>
 
-<h1>My Profile</h1>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="border-b bg-white/70 backdrop-blur">
+    <div class="container flex items-center justify-between py-4">
+        <a th:href="@{/}" class="flex items-center gap-2 font-semibold text-indigo-700">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10.012 10.012 0 0 0 12 2Zm1 14.93V20h-2v-3.07A8.017 8.017 0 0 1 4.07 13H1v-2h3.07A8.017 8.017 0 0 1 11 4.07V1h2v3.07A8.017 8.017 0 0 1 19.93 11H23v2h-3.07A8.017 8.017 0 0 1 13 16.93Z"/></svg>
+            <span>Track-Folio</span>
+        </a>
 
-<dl>
-    <dt>Email</dt>
-    <dd th:text="${user.email}">email@example.com</dd>
+        <nav class="flex items-center gap-3">
+            <a th:href="@{/}" class="px-4 py-2 rounded border border-slate-300 hover:bg-slate-100">Dashboard</a>
+            <form th:action="@{/logout}" method="post" class="m-0">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="px-4 py-2 rounded bg-slate-800 text-white hover:bg-slate-900">Log out</button>
+            </form>
+        </nav>
+    </div>
+</header>
 
-    <dt>Display name</dt>
-    <dd th:text="${user.displayName}">Admin</dd>
+<!-- Profile content -->
+<main class="container flex-1 py-12">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md border p-8">
+        <h1 class="text-3xl font-bold text-indigo-700">My Profile</h1>
+        <p class="mt-2 text-slate-600">Your account details</p>
 
-    <dt>Role</dt>
-    <dd th:text="${user.role}">ROLE_USER</dd>
+        <dl class="mt-6 divide-y divide-slate-200">
+            <div class="py-4 flex justify-between">
+                <dt class="font-medium">Email</dt>
+                <dd th:text="${user.email}" class="text-slate-700">email@example.com</dd>
+            </div>
+            <div class="py-4 flex justify-between">
+                <dt class="font-medium">Display name</dt>
+                <dd th:text="${user.displayName}" class="text-slate-700">Admin</dd>
+            </div>
+            <div class="py-4 flex justify-between">
+                <dt class="font-medium">Role</dt>
+                <dd th:text="${user.role}" class="text-slate-700">ROLE_USER</dd>
+            </div>
+            <div class="py-4 flex justify-between">
+                <dt class="font-medium">Created</dt>
+                <dd th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}" class="text-slate-700"></dd>
+            </div>
+            <div class="py-4 flex justify-between">
+                <dt class="font-medium">Updated</dt>
+                <dd th:text="${#temporals.format(user.updatedAt, 'yyyy-MM-dd HH:mm')}" class="text-slate-700"></dd>
+            </div>
+        </dl>
+    </div>
+</main>
 
-    <dt>Created</dt>
-    <dd th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">2025-08-26</dd>
-
-    <dt>Updated</dt>
-    <dd th:text="${#temporals.format(user.updatedAt, 'yyyy-MM-dd HH:mm')}">2025-08-26</dd>
-</dl>
+<!-- Footer -->
+<footer class="mt-10 border-t">
+    <div class="container py-6 text-sm text-slate-500 text-center">
+        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Track-Folio
+    </div>
+</footer>
 </body>
 </html>
