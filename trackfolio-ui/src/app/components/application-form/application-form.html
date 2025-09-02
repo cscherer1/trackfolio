@@ -1,0 +1,88 @@
+<!-- src/app/components/application-form/application-form.html -->
+<section style="max-width: 720px; margin: 0 auto; padding: 1rem;">
+  <header style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+    <h1 style="font-size:1.5rem; font-weight:700;">Add application</h1>
+    <a routerLink="/applications" style="padding:.5rem .75rem; border:1px solid #ddd; border-radius:.5rem; text-decoration:none;">
+      Back to list
+    </a>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <!-- Company -->
+    <div style="margin-bottom:.75rem;">
+      <label style="display:block; font-weight:600;">Company</label>
+      <input formControlName="company" style="width:100%; padding:.5rem; border:1px solid #ddd; border-radius:.5rem;" />
+      <small *ngIf="form.get('company')?.touched && form.get('company')?.invalid" style="color:#c00;">
+        Company is required
+      </small>
+    </div>
+
+    <!-- Role title -->
+    <div style="margin-bottom:.75rem;">
+      <label style="display:block; font-weight:600;">Role title</label>
+      <input formControlName="roleTitle" style="width:100%; padding:.5rem; border:1px solid #ddd; border-radius:.5rem;" />
+      <small *ngIf="form.get('roleTitle')?.touched && form.get('roleTitle')?.invalid" style="color:#c00;">
+        Role title is required
+      </small>
+    </div>
+
+    <!-- Row: source / status / appliedAt -->
+    <div style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:.75rem; margin-bottom:.75rem;">
+      <div>
+        <label style="display:block; font-weight:600;">Source</label>
+        <select formControlName="source" style="width:100%; padding:.5rem; border:1px solid #ddd; border-radius:.5rem;">
+          <option *ngFor="let s of sources" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display:block; font-weight:600;">Status</label>
+        <select formControlName="status" style="width:100%; padding:.5rem; border:1px solid #ddd; border-radius:.5rem;">
+          <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display:block; font-weight:600;">Applied date</label>
+        <input type="date" formControlName="appliedAt" style="width:100%; padding:.5rem; border:1px solid #ddd; border-radius:.5rem;" />
+      </div>
+    </div>
+
+    <!-- Row: location / salary -->
+    <div style="display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:.75rem; margin-bottom:.75rem;">
+      <div>
+        <label style="display:block; font-weight:600;">Location</label>
+        <input formControlName="location" style="width:100%; padding:.5rem; border:1px solid #ddd; border-radius:.5rem;" />
+      </div>
+      <div>
+        <label style="display:block; font-weight:600;">Salary (text)</label>
+        <input formControlName="salaryText" style="width:100%; padding:.5rem; border:1px solid #ddd; border-radius:.5rem;" />
+      </div>
+    </div>
+
+    <!-- Job link -->
+    <div style="margin-bottom:.75rem;">
+      <label style="display:block; font-weight:600;">Job link</label>
+      <input formControlName="jobLink" style="width:100%; padding:.5rem; border:1px solid #ddd; border-radius:.5rem;" />
+    </div>
+
+    <!-- Notes -->
+    <div style="margin-bottom:.75rem;">
+      <label style="display:block; font-weight:600;">Notes</label>
+      <textarea rows="4" formControlName="notes" style="width:100%; padding:.5rem; border:1px solid #ddd; border-radius:.5rem;"></textarea>
+    </div>
+
+    <div *ngIf="error" style="margin-bottom:.75rem; padding:.75rem; border:1px solid #f5c2c7; background:#f8d7da; color:#842029; border-radius:.5rem;">
+      {{ error }}
+    </div>
+
+    <div style="display:flex; gap:.5rem;">
+      <button type="submit" [disabled]="saving" style="padding:.5rem .75rem; border:none; border-radius:.5rem; background:#111; color:#fff;">
+        {{ saving ? 'Saving…' : 'Save' }}
+      </button>
+      <button type="button" (click)="form.reset()" style="padding:.5rem .75rem; border:1px solid #ddd; border-radius:.5rem; background:#fff;">
+        Reset
+      </button>
+    </div>
+  </form>
+</section>

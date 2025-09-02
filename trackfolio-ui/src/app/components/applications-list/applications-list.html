@@ -1,0 +1,60 @@
+<!-- Applications List (works with or without Tailwind installed) -->
+<section class="max-w-5xl mx-auto p-4">
+  <header style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+    <h1 style="font-size:1.5rem; font-weight:700;">Applications</h1>
+
+    <div style="display:flex; gap:.5rem;">
+      <button (click)="load()" style="padding:.4rem .7rem; border:1px solid #ddd; border-radius:.5rem;">
+        Refresh
+      </button>
+      <a routerLink="/applications/new"
+         style="padding:.45rem .75rem; border:1px solid #ddd; border-radius:.5rem; text-decoration:none;">
+        Add application
+      </a>
+    </div>
+  </header>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="p-3 border rounded">Loading…</div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && error" class="p-3 border rounded bg-red-50 text-red-700">
+    {{ error }}
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!loading && !error && apps.length === 0" class="p-3 border rounded">
+    No applications yet. Click <strong>Add application</strong> to create your first one.
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading && !error && apps.length > 0" class="overflow-x-auto border rounded">
+    <table class="min-w-full">
+      <thead>
+      <tr class="bg-gray-100">
+        <th class="text-left p-2">Company</th>
+        <th class="text-left p-2">Role</th>
+        <th class="text-left p-2">Status</th>
+        <th class="text-left p-2">Source</th>
+        <th class="text-left p-2">Applied</th>
+        <th class="text-left p-2">Location</th>
+        <th class="text-left p-2">Link</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let a of apps" class="border-t">
+        <td class="p-2">{{ a.company }}</td>
+        <td class="p-2">{{ a.roleTitle }}</td>
+        <td class="p-2">{{ a.status }}</td>
+        <td class="p-2">{{ a.source }}</td>
+        <td class="p-2">{{ a.appliedAt | date:'yyyy-MM-dd' }}</td>
+        <td class="p-2">{{ a.location || '—' }}</td>
+        <td class="p-2">
+          <a *ngIf="a.jobLink" [href]="a.jobLink" target="_blank" rel="noopener">Open</a>
+          <span *ngIf="!a.jobLink">—</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
