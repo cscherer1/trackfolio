@@ -3,18 +3,18 @@ package com.scherer.trackfolio.application;
 import com.scherer.trackfolio.user.User;
 import com.scherer.trackfolio.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Controller
-@RequestMapping("/applications")
+@RestController
+@RequestMapping("/api/applications") // JSON API for Angular
 @RequiredArgsConstructor
 public class ApplicationController {
 
@@ -29,35 +29,29 @@ public class ApplicationController {
                 .orElseThrow(() -> new IllegalStateException("User not found"));
     }
 
-    // List all applications for current user
-    @GetMapping
-    public String list(Authentication auth, Model model) {
+    // GET /api/applications  -> JSON array for the current user
+    @GetMapping(produces = "application/json")
+    public List<Application> list(Authentication auth) {
         User owner = getCurrentUser(auth);
-        List<Application> list = applications.findByOwnerAndDeletedAtIsNullOrderByAppliedAtDescCreatedAtDesc(owner);
-        model.addAttribute("applications", list);
-        return "applications/list"; // templates/applications/list.html
+        return applications.findByOwnerAndDeletedAtIsNullOrderByAppliedAtDescCreatedAtDesc(owner);
     }
 
-    // Show create form
-    @GetMapping("/new")
-    public String newForm(Model model) {
-        Application app = Application.builder()
-                .appliedAt(LocalDate.now())
-                .status("APPLIED")
-                .source("LINKEDIN")
-                .build();
-        model.addAttribute("application", app);
-        return "applications/form"; // templates/applications/form.html
-    }
-
-    // Handle create
-    @PostMapping
-    public String create(Authentication auth, @ModelAttribute("application") Application app) {
+    // POST /api/applications -> create one (JSON in/out)
+    @PostMapping(consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Application> create(@RequestBody Application in, Authentication auth) {
         User owner = getCurrentUser(auth);
-        app.setOwner(owner);
-        app.setCreatedAt(LocalDateTime.now());
-        app.setUpdatedAt(LocalDateTime.now());
-        applications.save(app);
-        return "redirect:/applications";
+
+        // server-side ownership + sane defaults
+        in.setId(null);
+        in.setOwner(owner);
+        if (in.getAppliedAt() == null) in.setAppliedAt(LocalDate.now());
+        if (in.getStatus() == null)    in.setStatus("APPLIED");
+        if (in.getSource() == null)    in.setSource("LINKEDIN");
+        in.setCreatedAt(LocalDateTime.now());
+        in.setUpdatedAt(LocalDateTime.now());
+
+        Application saved = applications.save(in);
+        return ResponseEntity.created(URI.create("/api/applications/" + saved.getId()))
+                .body(saved);
     }
 }

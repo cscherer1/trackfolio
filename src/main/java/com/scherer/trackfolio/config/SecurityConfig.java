@@ -16,7 +16,7 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/api/**"))
                 .authorizeHttpRequests(auth -> auth
                         // make these PUBLIC explicitly (match both GET and POST)
                         .requestMatchers("/").permitAll() //Public Landing Page
@@ -29,7 +29,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")          // still use Spring's login for now
-                        .defaultSuccessUrl("/", true)  // 👈 force redirect after login
+                        .defaultSuccessUrl("/", true)  // force redirect after login
                         .permitAll()
                 )
                 .logout(Customizer.withDefaults());

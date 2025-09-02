@@ -1,5 +1,6 @@
 package com.scherer.trackfolio.application;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scherer.trackfolio.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,8 +21,9 @@ public class Application {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "owner_user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    @JsonIgnore // prevent recursion / serialization errors
     private User owner;
 
     @Column(nullable = false, length = 160)
