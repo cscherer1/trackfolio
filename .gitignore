@@ -1,0 +1,20 @@
+# Node / Angular
+trackfolio-ui/node_modules/
+trackfolio-ui/dist/
+trackfolio-ui/.angular/cache/
+trackfolio-ui/.eslintcache
+
+# Java / Maven
+trackfolio/target/
+trackfolio/.mvn/wrapper/maven-wrapper.jar
+trackfolio/.idea/
+
+# OS / Editors
+.DS_Store
+Thumbs.db
+*.iml
+.idea/
+.vscode/
+
+# Logs
+**/*.log
