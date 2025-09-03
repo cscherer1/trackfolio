@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+/* Tell Tailwind where to look for class usage (Angular templates & TS) */
+@source "./index.html";
+@source "./app/**/*.{html,ts}";
