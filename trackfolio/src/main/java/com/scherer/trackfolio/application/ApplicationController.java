@@ -69,5 +69,40 @@ public class ApplicationController {
         return ResponseEntity.noContent().build();
     }
 
+    // Get single application
+    @GetMapping("/{id}")
+    public ResponseEntity<Application> find(@PathVariable UUID id, Authentication auth) {
+        User owner = getCurrentUser(auth);
+        return applications.findById(id)
+                .filter(app -> app.getOwner().equals(owner))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Update
+    @PutMapping("/{id}")
+    public ResponseEntity<Application> update(@PathVariable UUID id,
+                                              @RequestBody Application in,
+                                              Authentication auth) {
+        User owner = getCurrentUser(auth);
+
+        return applications.findById(id)
+                .filter(app -> app.getOwner().equals(owner))
+                .map(existing -> {
+                    existing.setCompany(in.getCompany());
+                    existing.setRoleTitle(in.getRoleTitle());
+                    existing.setSource(in.getSource());
+                    existing.setStatus(in.getStatus());
+                    existing.setAppliedAt(in.getAppliedAt());
+                    existing.setLocation(in.getLocation());
+                    existing.setSalaryText(in.getSalaryText());
+                    existing.setJobLink(in.getJobLink());
+                    existing.setNotes(in.getNotes());
+                    existing.setUpdatedAt(LocalDateTime.now());
+                    return ResponseEntity.ok(applications.save(existing));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 
 }

@@ -54,6 +54,12 @@
           <span *ngIf="!a.jobLink">—</span>
         </td>
         <td class="p-2">
+          <button
+            [routerLink]="['/applications', a.id, 'edit']"
+            style="padding:.35rem .6rem; border:1px solid #ddd; border-radius:.45rem; margin-right:.4rem;">
+            Edit
+          </button>
+
           <!-- normal state -->
           <button
             *ngIf="deletingId !== a.id"

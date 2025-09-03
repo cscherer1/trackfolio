@@ -6,5 +6,6 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'applications' },
   { path: 'applications', component: ApplicationsListComponent },
   { path: 'applications/new', component: ApplicationFormComponent },
+  { path: 'applications/:id/edit', component: ApplicationFormComponent },
   { path: '**', redirectTo: 'applications' }
 ];

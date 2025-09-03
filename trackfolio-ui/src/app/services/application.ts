@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 // Keep this in sync with the Spring JSON (owner omitted on purpose)
 export interface Application {
@@ -37,15 +38,20 @@ export class ApplicationService {
       .pipe(catchError(this.handle));
   }
 
+  find(id: string): Observable<Application> {
+    return this.http.get<Application>(`${this.baseUrl}/${id}`).pipe(catchError(this.handle));
+  }
+
+  update(id: string, payload: Partial<Application>): Observable<Application> {
+    return this.http.put<Application>(`${this.baseUrl}/${id}`, payload).pipe(catchError(this.handle));
+  }
+
+
   delete(id: string) {
     return this.http
       .delete<void>(`${this.baseUrl}/${id}`)
       .pipe(catchError(this.handle));
   }
-
-  // add update later
-  // update(id: string, payload: Partial<Application>) { ... }
-
 
   private handle(err: HttpErrorResponse) {
     const msg =

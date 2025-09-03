@@ -1,8 +1,8 @@
 // src/app/components/application-form/application-form.ts
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { ApplicationService, Application } from '../../services/application';
 
 @Component({
@@ -11,13 +11,16 @@ import { ApplicationService, Application } from '../../services/application';
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './application-form.html'
 })
-export class ApplicationFormComponent {
+export class ApplicationFormComponent implements OnInit{
   private fb = inject(FormBuilder);
   private svc = inject(ApplicationService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   saving = false;
   error?: string;
+  editMode = false;
+  id?: string;
 
   sources = ['LINKEDIN', 'COMPANY', 'INDEED', 'REFERRAL', 'OTHER'];
   statuses = ['APPLIED', 'INTERVIEW', 'OFFER', 'REJECTED', 'WITHDRAWN'];
@@ -34,6 +37,18 @@ export class ApplicationFormComponent {
     notes:      [''],
   });
 
+  ngOnInit() {
+    this.id = this.route.snapshot.paramMap.get('id') || undefined;
+    this.editMode = !!this.id;
+
+    if (this.editMode && this.id) {
+      this.svc.find(this.id).subscribe({
+        next: (app) => this.form.patchValue(app),
+        error: (err) => this.error = err?.message ?? 'Failed to load application'
+      });
+    }
+  }
+
   submit() {
     this.error = undefined;
     if (this.form.invalid) {
@@ -41,9 +56,13 @@ export class ApplicationFormComponent {
       return;
     }
     const payload = this.form.value as unknown as Application;
-
     this.saving = true;
-    this.svc.create(payload).subscribe({
+
+    const request = this.editMode && this.id
+      ? this.svc.update(this.id, payload)
+      : this.svc.create(payload);
+
+    request.subscribe({
       next: () => {
         this.saving = false;
         this.router.navigateByUrl('/applications');
