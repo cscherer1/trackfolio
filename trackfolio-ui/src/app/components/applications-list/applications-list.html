@@ -7,10 +7,10 @@
       <button (click)="load()" style="padding:.4rem .7rem; border:1px solid #ddd; border-radius:.5rem;">
         Refresh
       </button>
-      <a routerLink="/applications/new"
+      <button routerLink="/applications/new"
          style="padding:.45rem .75rem; border:1px solid #ddd; border-radius:.5rem; text-decoration:none;">
         Add application
-      </a>
+      </button>
     </div>
   </header>
 
@@ -52,6 +52,25 @@
         <td class="p-2">
           <a *ngIf="a.jobLink" [href]="a.jobLink" target="_blank" rel="noopener">Open</a>
           <span *ngIf="!a.jobLink">—</span>
+        </td>
+        <td class="p-2">
+          <!-- normal state -->
+          <button
+            *ngIf="deletingId !== a.id"
+            (click)="remove(a.id!)"
+            style="padding:.35rem .6rem; border:1px solid #ddd; border-radius:.45rem;"
+          >
+            Delete
+          </button>
+
+          <!-- deleting state -->
+          <button
+            *ngIf="deletingId === a.id"
+            disabled
+            style="padding:.35rem .6rem; border:1px solid #ddd; border-radius:.45rem; opacity:.6;"
+          >
+            Deleting…
+          </button>
         </td>
       </tr>
       </tbody>

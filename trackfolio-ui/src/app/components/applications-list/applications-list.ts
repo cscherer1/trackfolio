@@ -1,17 +1,19 @@
 import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { ApplicationService, Application } from '../../services/application';
 
 @Component({
   selector: 'app-applications-list',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, RouterModule],
   templateUrl: './applications-list.html'
 })
 export class ApplicationsListComponent implements OnInit {
   apps: Application[] = [];
   loading = true;
   error?: string;
+  deletingId?: string;
 
   private platformId = inject(PLATFORM_ID);
 
@@ -34,4 +36,20 @@ export class ApplicationsListComponent implements OnInit {
       error: (err) => { this.error = err.message ?? 'Failed to load applications'; this.loading = false; }
     });
   }
+
+remove(id: string) {
+  if (!confirm('Delete this application?')) return;
+  this.deletingId = id;
+  this.svc.delete(id).subscribe({
+    next: () => {
+      // refresh the list
+      this.load();
+      this.deletingId = undefined;
+    },
+    error: (err) => {
+      alert(err?.error?.message ?? err.message ?? 'Delete failed');
+      this.deletingId = undefined;
+    }
+  });
+}
 }

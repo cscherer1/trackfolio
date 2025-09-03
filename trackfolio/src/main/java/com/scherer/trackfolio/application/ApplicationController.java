@@ -7,11 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/applications") // JSON API for Angular
@@ -54,4 +57,17 @@ public class ApplicationController {
         return ResponseEntity.created(URI.create("/api/applications/" + saved.getId()))
                 .body(saved);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id, Authentication auth) {
+        var owner = users.findByEmail(auth.getName()).orElseThrow();
+        var app = applications.findById(id)
+                .filter(a -> a.getOwner().getId().equals(owner.getId()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        app.setDeletedAt(LocalDateTime.now());
+        applications.save(app);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

@@ -37,9 +37,15 @@ export class ApplicationService {
       .pipe(catchError(this.handle));
   }
 
-  // add update/delete later
+  delete(id: string) {
+    return this.http
+      .delete<void>(`${this.baseUrl}/${id}`)
+      .pipe(catchError(this.handle));
+  }
+
+  // add update later
   // update(id: string, payload: Partial<Application>) { ... }
-  // remove(id: string) { ... }
+
 
   private handle(err: HttpErrorResponse) {
     const msg =

@@ -2,9 +2,11 @@
 <section style="max-width: 720px; margin: 0 auto; padding: 1rem;">
   <header style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
     <h1 style="font-size:1.5rem; font-weight:700;">Add application</h1>
-    <a routerLink="/applications" style="padding:.5rem .75rem; border:1px solid #ddd; border-radius:.5rem; text-decoration:none;">
+    <button type="button"
+            routerLink="/applications"
+            style="padding:.5rem .75rem; border:1px solid #ddd; border-radius:.5rem; text-decoration:none;">
       Back to list
-    </a>
+    </button>
   </header>
 
   <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
