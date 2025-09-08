@@ -32,6 +32,22 @@ export class ApplicationsListComponent implements OnInit {
     to?: string;   // yyyy-MM-dd
   } = {};
 
+  showFilters = false;
+
+  toggleFilters(){
+    this.showFilters = !this.showFilters;
+  }
+
+  get activeFilterCount(): number {
+    let n = 0;
+    if (this.filters.q) n++;
+    if (this.filters.status) n++;
+    if (this.filters.source) n++;
+    if (this.filters.from) n++;
+    if (this.filters.to) n++;
+    return n;
+  }
+
   private platformId = inject(PLATFORM_ID);
 
   constructor(private svc: ApplicationService) {}

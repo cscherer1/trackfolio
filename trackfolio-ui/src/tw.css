@@ -154,6 +154,26 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* --- Animated accordion helpers --- */
+  .accordion {
+    @apply overflow-hidden transition-[grid-template-rows] duration-300 ease-out grid;
+    grid-template-rows: 0fr;                 /* collapsed */
+  }
+  .accordion.open {
+    grid-template-rows: 1fr;                 /* expanded */
+  }
+  .accordion-slot {
+    @apply min-h-0;                           /* lets content collapse nicely */
+  }
+
+  /* subtle neon edge for flair */
+  .glow {
+    box-shadow:
+      0 0 0 1px rgba(99,102,241,.25) inset,
+      0 10px 35px -20px rgba(99,102,241,.65);
+  }
+
 }
 
 /* ---------- INPUT CONTENT SPACING / RENDERING ---------- */

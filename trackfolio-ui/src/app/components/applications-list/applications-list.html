@@ -17,6 +17,33 @@
           Refresh
         </button>
 
+        <!-- Filters toggle with rotating chevron + badge -->
+        <button
+          class="btn relative"
+          (click)="toggleFilters()"
+          [attr.aria-expanded]="showFilters"
+          aria-controls="filters-panel"
+        >
+          <svg class="size-4 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-width="2" d="M3 6h18M6 12h12m-8 6h4"/>
+          </svg>
+          Filters
+          <span *ngIf="activeFilterCount"
+                class="ml-1 inline-flex items-center justify-center rounded-full min-w-5 h-5 px-1.5
+                 text-xs font-semibold bg-indigo-600 text-white">
+      {{ activeFilterCount }}
+    </span>
+
+          <!-- chevron (rotates) -->
+          <svg class="ml-1 size-4 transition-transform duration-300 ease-out"
+               [class.rotate-180]="showFilters"
+               viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd"
+                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                  clip-rule="evenodd"/>
+          </svg>
+        </button>
+
         <a routerLink="/applications/new" class="btn btn-primary">
           <svg class="size-4 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-width="2" d="M12 5v14m-7-7h14"/>
@@ -34,95 +61,101 @@
       {{ error }}
     </div>
 
-    <div *ngIf="!loading && !error && apps.length === 0" class="card p-8 text-center">
+    <div *ngIf="!loading && !error && apps.length === 0"
+         class="card p-8 text-center"
+         [class.hidden]="!showFilters">
       <p class="text-gray-500">No applications yet.</p>
       <a routerLink="/applications/new" class="btn btn-primary mt-4">Create your first</a>
     </div>
 
-    <!-- Filters -->
-    <div *ngIf="!loading && !error && apps.length > 0" class="card p-4 space-y-3">
-      <!-- Row 1: search -->
-      <div>
-        <label class="label">Search</label>
-        <input
-          class="input"
-          type="text"
-          placeholder="Company, role, location, notes…"
-          [value]="filters.q ?? ''"
-          (input)="setFilter('q', $any($event.target).value)" />
-      </div>
+    <!-- Animated Filters Panel -->
+    <div
+      id="filters-panel"
+      class="accordion mt-3"
+      [class.open]="showFilters"
+    >
+      <div class="accordion-slot">
+        <div class="card glow p-5 space-y-4">
 
-      <!-- Row 2: status / source -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div>
-          <label class="label">Status</label>
-          <div class="select-wrap">
-            <select
-              class="select"
-              [value]="filters.status ?? ''"
-              (change)="setFilter('status', $any($event.target).value || undefined)">
-              <option value="">All</option>
-              <option *ngFor="let s of ['APPLIED','INTERVIEW','OFFER','REJECTED','WITHDRAWN']" [value]="s">{{ s }}</option>
-            </select>
-            <svg class="caret" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd"
-                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-                    clip-rule="evenodd" />
-            </svg>
+          <!-- Row 1: search -->
+          <div>
+            <label class="label">Search</label>
+            <input
+              class="input"
+              type="text"
+              placeholder="Company, role, location, notes…"
+              [value]="filters.q ?? ''"
+              (input)="setFilter('q', $any($event.target).value)"
+            />
+          </div>
+
+          <!-- Row 2: status / source -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="label">Status</label>
+              <div class="select-wrap">
+                <select class="select"
+                        [value]="filters.status ?? ''"
+                        (change)="setFilter('status', $any($event.target).value || undefined)">
+                  <option value="">All</option>
+                  <option *ngFor="let s of ['APPLIED','INTERVIEW','OFFER','REJECTED','WITHDRAWN']" [value]="s">{{ s }}</option>
+                </select>
+                <svg class="caret" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                        clip-rule="evenodd"/>
+                </svg>
+              </div>
+            </div>
+
+            <div>
+              <label class="label">Source</label>
+              <div class="select-wrap">
+                <select class="select"
+                        [value]="filters.source ?? ''"
+                        (change)="setFilter('source', $any($event.target).value || undefined)">
+                  <option value="">All</option>
+                  <option *ngFor="let s of ['LINKEDIN','COMPANY','INDEED','REFERRAL','OTHER']" [value]="s">{{ s }}</option>
+                </select>
+                <svg class="caret" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                        clip-rule="evenodd"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: dates + clear -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div>
+              <label class="label">From</label>
+              <input class="input" type="date"
+                     [value]="filters.from ?? ''"
+                     (change)="setFilter('from', $any($event.target).value || undefined)" />
+            </div>
+            <div>
+              <label class="label">To</label>
+              <input class="input" type="date"
+                     [value]="filters.to ?? ''"
+                     (change)="setFilter('to', $any($event.target).value || undefined)" />
+            </div>
+            <div class="flex md:justify-end">
+              <button class="btn btn-ghost"
+                      (click)="clearFilters()"
+                      [disabled]="!filters.q && !filters.status && !filters.source && !filters.from && !filters.to">
+                Clear filters
+              </button>
+            </div>
+          </div>
+
+          <div class="text-xs text-white/60">
+            Showing <strong>{{ view.length }}</strong> of <strong>{{ apps.length }}</strong> applications
           </div>
         </div>
-
-        <div>
-          <label class="label">Source</label>
-          <div class="select-wrap">
-            <select
-              class="select"
-              [value]="filters.source ?? ''"
-              (change)="setFilter('source', $any($event.target).value || undefined)">
-              <option value="">All</option>
-              <option *ngFor="let s of ['LINKEDIN','COMPANY','INDEED','REFERRAL','OTHER']" [value]="s">{{ s }}</option>
-            </select>
-            <svg class="caret" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fill-rule="evenodd"
-                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-                    clip-rule="evenodd" />
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 3: date range + clear -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
-        <div>
-          <label class="label">From</label>
-          <input
-            class="input"
-            type="date"
-            [value]="filters.from ?? ''"
-            (change)="setFilter('from', $any($event.target).value || undefined)" />
-        </div>
-        <div>
-          <label class="label">To</label>
-          <input
-            class="input"
-            type="date"
-            [value]="filters.to ?? ''"
-            (change)="setFilter('to', $any($event.target).value || undefined)" />
-        </div>
-        <div class="flex md:justify-end">
-          <button
-            class="btn btn-ghost"
-            (click)="clearFilters()"
-            [disabled]="!filters.q && !filters.status && !filters.source && !filters.from && !filters.to">
-            Clear filters
-          </button>
-        </div>
-      </div>
-
-      <div class="text-xs text-white/60">
-        Showing <strong>{{ view.length }}</strong> of <strong>{{ apps.length }}</strong> applications
       </div>
     </div>
+
 
     <!-- Table -->
     <div *ngIf="!loading && !error && apps.length > 0" class="card overflow-hidden">
