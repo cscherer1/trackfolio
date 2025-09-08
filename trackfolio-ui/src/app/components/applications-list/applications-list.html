@@ -1,5 +1,6 @@
 <section class="page">
   <div class="max-w-6xl mx-auto px-6 py-10 space-y-6">
+
     <!-- Top chrome -->
     <div class="chrome card p-5 flex items-center justify-between">
       <h1 class="text-2xl font-semibold tracking-tight">
@@ -10,26 +11,20 @@
 
       <div class="flex gap-2">
         <button class="btn" (click)="load()">
-          <svg class="size-4 opacity-70" viewBox="0 0 20 20" fill="currentColor"><path d="M3 10a7 7 0 1 1 2.05 4.95l1.4-1.4A5 5 0 1 0 5 10H2l4 4 4-4H7a3 3 0 1 1-.88-2.12l1.42 1.42A5 5 0 1 0 3 10Z"/></svg>
+          <svg class="size-4 opacity-70" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M3 10a7 7 0 1 1 2.05 4.95l1.4-1.4A5 5 0 1 0 5 10H2l4 4 4-4H7a3 3 0 1 1-.88-2.12l1.42 1.42A5 5 0 1 0 3 10Z"/>
+          </svg>
           Refresh
         </button>
 
         <a routerLink="/applications/new" class="btn btn-primary">
-          <svg class="size-4 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="2" d="M12 5v14m-7-7h14"/></svg>
+          <svg class="size-4 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-width="2" d="M12 5v14m-7-7h14"/>
+          </svg>
           Add application
         </a>
       </div>
     </div>
-
-    <!-- simple search  -->
-    <div class="card p-4">
-      <input
-        class="input"
-        placeholder="Search company, role, status, source, location…"
-        input="onQueryChange(($event.target as HTMLInputElement).value)"
-      />
-    </div>
-
 
     <!-- States -->
     <div *ngIf="loading" class="card p-6">Loading…</div>
@@ -44,11 +39,95 @@
       <a routerLink="/applications/new" class="btn btn-primary mt-4">Create your first</a>
     </div>
 
+    <!-- Filters -->
+    <div *ngIf="!loading && !error && apps.length > 0" class="card p-4 space-y-3">
+      <!-- Row 1: search -->
+      <div>
+        <label class="label">Search</label>
+        <input
+          class="input"
+          type="text"
+          placeholder="Company, role, location, notes…"
+          [value]="filters.q ?? ''"
+          (input)="setFilter('q', $any($event.target).value)" />
+      </div>
+
+      <!-- Row 2: status / source -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label class="label">Status</label>
+          <div class="select-wrap">
+            <select
+              class="select"
+              [value]="filters.status ?? ''"
+              (change)="setFilter('status', $any($event.target).value || undefined)">
+              <option value="">All</option>
+              <option *ngFor="let s of ['APPLIED','INTERVIEW','OFFER','REJECTED','WITHDRAWN']" [value]="s">{{ s }}</option>
+            </select>
+            <svg class="caret" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                    clip-rule="evenodd" />
+            </svg>
+          </div>
+        </div>
+
+        <div>
+          <label class="label">Source</label>
+          <div class="select-wrap">
+            <select
+              class="select"
+              [value]="filters.source ?? ''"
+              (change)="setFilter('source', $any($event.target).value || undefined)">
+              <option value="">All</option>
+              <option *ngFor="let s of ['LINKEDIN','COMPANY','INDEED','REFERRAL','OTHER']" [value]="s">{{ s }}</option>
+            </select>
+            <svg class="caret" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                    clip-rule="evenodd" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: date range + clear -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+        <div>
+          <label class="label">From</label>
+          <input
+            class="input"
+            type="date"
+            [value]="filters.from ?? ''"
+            (change)="setFilter('from', $any($event.target).value || undefined)" />
+        </div>
+        <div>
+          <label class="label">To</label>
+          <input
+            class="input"
+            type="date"
+            [value]="filters.to ?? ''"
+            (change)="setFilter('to', $any($event.target).value || undefined)" />
+        </div>
+        <div class="flex md:justify-end">
+          <button
+            class="btn btn-ghost"
+            (click)="clearFilters()"
+            [disabled]="!filters.q && !filters.status && !filters.source && !filters.from && !filters.to">
+            Clear filters
+          </button>
+        </div>
+      </div>
+
+      <div class="text-xs text-white/60">
+        Showing <strong>{{ view.length }}</strong> of <strong>{{ apps.length }}</strong> applications
+      </div>
+    </div>
+
     <!-- Table -->
-    <div *ngIf="!loading && !error && apps.length > 0"
-         class="card overflow-hidden">
+    <div *ngIf="!loading && !error && apps.length > 0" class="card overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
+        <table class="table min-w-full text-sm">
           <thead class="t-head">
           <tr>
             <th class="t-th cursor-pointer select-none" (click)="setSort('company')">
@@ -75,7 +154,6 @@
           </tr>
           </thead>
 
-          <!-- rows -->
           <tbody>
           <tr *ngFor="let a of view" class="t-row">
             <td class="t-cell font-medium">{{ a.company }}</td>
@@ -86,7 +164,7 @@
             <td class="t-cell">
               <span class="chip chip-source">{{ a.source }}</span>
             </td>
-            <td class="t-cell date">{{ a.appliedAt | date:'yyyy-MM-dd' }}</td>
+            <td class="t-cell whitespace-nowrap">{{ a.appliedAt | date:'yyyy-MM-dd' }}</td>
             <td class="t-cell">{{ a.location || '—' }}</td>
             <td class="t-cell">
               <a *ngIf="a.jobLink" [href]="a.jobLink" target="_blank" rel="noopener"
@@ -105,5 +183,6 @@
         </table>
       </div>
     </div>
+
   </div>
 </section>
