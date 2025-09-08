@@ -3,3 +3,183 @@
 /* Tell Tailwind where to look for class usage (Angular templates & TS) */
 @source "./index.html";
 @source "./app/**/*.{html,ts}";
+
+/* ===================== Base ===================== */
+@layer base {
+  /* Remove the top white strip + set dark default */
+  html, body { height: 100%; }
+  body {
+    @apply m-0 bg-[#0a0f1c] text-slate-100 antialiased;
+    @apply font-sans text-[15px] leading-6 tracking-normal; /* unified type rhythm */
+  }
+
+  :root { --brand: 99 102 241; } /* indigo-500 */
+  html { color-scheme: light; }
+  :root.dark { color-scheme: dark; }
+}
+
+/* =================== Components ================== */
+@layer components {
+  /* -------- Cards & chrome -------- */
+  .card {
+    @apply rounded-2xl bg-white/70 backdrop-blur border border-gray-200 shadow-lg shadow-black/5
+           dark:bg-white/6 dark:border-white/10 dark:shadow-none
+           transition-all duration-200;
+  }
+  .chrome {
+    @apply bg-gradient-to-r from-indigo-500/10 via-transparent to-indigo-500/10 rounded-2xl
+           border border-indigo-500/20 dark:border-white/10;
+  }
+
+  /* -------- Buttons (polished) -------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-sm font-medium
+           border border-white/10 bg-white/5 text-white/90
+           shadow-[0_1px_0_0_rgba(255,255,255,0.05)_inset,0_6px_20px_-12px_rgba(0,0,0,0.6)]
+           transition-all duration-200;
+  }
+  .btn:hover   { @apply bg-white/10 text-white; }
+  .btn:active  { @apply translate-y-[1px] opacity-90; }
+  .btn:disabled{ @apply opacity-50 cursor-not-allowed; }
+
+  .btn-primary {
+    @apply border-transparent bg-indigo-600 text-white
+           shadow-[0_8px_30px_-10px_rgba(99,102,241,0.7)];
+  }
+  .btn-primary:hover { @apply bg-indigo-500; }
+
+  .btn-danger {
+    @apply border-transparent bg-rose-600 text-white
+           shadow-[0_8px_30px_-10px_rgba(244,63,94,0.7)];
+  }
+  .btn-danger:hover { @apply bg-rose-500; }
+
+  .btn-ghost      { @apply border-transparent bg-transparent text-white/80; }
+  .btn-ghost:hover{ @apply bg-white/10 text-white; }
+
+  /* -------- Inputs / selects / textarea -------- */
+  .label {
+    @apply block mb-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 tracking-normal;
+  }
+
+  .input, .select, .textarea {
+    @apply w-full rounded-xl border border-white/10 bg-white/5 text-white/90
+           placeholder:text-white/40
+           shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]
+           transition-all duration-150
+           text-sm leading-6;              /* consistent type size & baseline */
+  }
+  /* lock controls to identical height */
+  .input, .select { @apply h-11 py-0; }
+  .input:focus, .select:focus, .textarea:focus {
+    @apply outline-none ring-2 ring-indigo-400/60 ring-offset-0
+           border-indigo-400/40 bg-white/[0.07];
+  }
+  .textarea { @apply pl-4 pr-4 pt-3 min-h-[8rem];     /* added top padding so text isn’t glued to top */
+                  line-height: 1.5rem;                /* stable text spacing */
+                  }
+
+  /* Custom caret & dark dropdown appearance */
+  .select-wrap { @apply relative; }
+  .select-wrap .select { @apply pr-10 appearance-none; }
+  .select-wrap .caret {
+    @apply pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400;
+  }
+
+  /* Native options palette (works across browsers with color-scheme hints) */
+  .select { color-scheme: light; }           /* keep popup readable */
+  .select optgroup { @apply text-gray-500; }
+
+  .select option {
+    background-color: #242834;               /* dark dropdown bg */
+    color: #e5e7eb;                           /* gray-200 text   */
+  }
+  .select option:hover,
+  .select option:focus {
+    background-color: #1f2937;               /* gray-800 */
+    color: #fff;
+    font-weight: 600;
+  }
+  .select option:checked {
+    background-color: rgb(99 102 241 / 1);   /* solid indigo */
+    color: #fff;
+    font-weight: 600;
+  }
+
+  :root.dark .select option {
+    background-color: #000;
+    color: #e5e7eb;
+  }
+
+  /* -------- Chips (badges) -------- */
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold border;
+    @apply relative top-[1px];               /* tiny baseline nudge so it aligns with text */
+  }
+  /* STATUS chips (bring back the colors) */
+  .chip-status-APPLIED    { @apply bg-indigo-50  text-indigo-700  border-indigo-200  dark:bg-indigo-500/15  dark:text-indigo-200  dark:border-indigo-500/25; }
+  .chip-status-INTERVIEW  { @apply bg-amber-50  text-amber-700  border-amber-200   dark:bg-amber-500/15   dark:text-amber-200   dark:border-amber-500/25; }
+  .chip-status-OFFER      { @apply bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-200 dark:border-emerald-500/25; }
+  .chip-status-REJECTED   { @apply bg-rose-50    text-rose-700    border-rose-200    dark:bg-rose-500/15    dark:text-rose-200    dark:border-rose-500/25; }
+  .chip-status-WITHDRAWN  { @apply bg-gray-100   text-gray-600    border-gray-200    dark:bg-white/10       dark:text-white/70     dark:border-white/10; }
+
+  /* SOURCE chip (subtle) */
+  .chip-source {
+    @apply bg-white text-gray-700 border-gray-200 dark:bg-white/10 dark:text-white dark:border-white/10;
+  }
+
+  /* ===== Table helpers (consistent vertical rhythm) ===== */
+  .table  { @apply w-full border-separate border-spacing-0; }
+  .t-head { @apply bg-white/5 text-slate-300; }
+  .t-th   { @apply px-6 py-4 font-semibold text-slate-300 align-middle leading-6 tracking-normal; }
+  .t-row  { @apply border-t border-white/10 hover:bg-white/[.04] transition-colors; }
+  .t-cell { @apply px-6 py-4 text-slate-200 align-middle leading-6 tracking-normal; }
+  /* Prevent wrapping on date cells */
+  .t-cell.date {
+    @apply whitespace-nowrap; /* keep text in a single line */
+    font-variant-numeric: tabular-nums; /* consistent aligned digits */
+  }
+}
+
+/* ==================== Utilities =================== */
+@layer utilities {
+  .page {
+    @apply min-h-[100svh]
+           bg-[radial-gradient(60%_60%_at_20%_0%,theme(colors.indigo.100/.60),transparent_60%),radial-gradient(50%_60%_at_80%_0%,theme(colors.pink.100/.60),transparent_60%)]
+           dark:bg-[conic-gradient(from_180deg_at_50%_120%,#0b1020,#0a0f1c,#0b1020)];
+  }
+
+  /* optional: crisp text rendering everywhere */
+  .text-smooth {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ---------- INPUT CONTENT SPACING / RENDERING ---------- */
+@layer components {
+  /* Make field content breathe & render cleanly */
+  .input, .select, .textarea {
+    @apply pl-4 pr-4 text-[15px] leading-[1.35rem]; /* more left pad + stable line-height */
+    letter-spacing: 0;                               /* prevent weird glyph overlap */
+    font-variant-numeric: tabular-nums;              /* clean, aligned numbers/dates */
+    -moz-font-feature-settings: "tnum";
+    font-feature-settings: "tnum";
+  }
+
+  /* Select should also feel roomy */
+  .select-wrap .select { @apply pl-4 pr-10; }
+
+  /* Date input (Chromium/WebKit) */
+  .input[type="date"]::-webkit-datetime-edit-fields-wrapper
+  .input[type="date"]::-webkit-datetime-edit
+  .input[type="date"]::-webkit-datetime-edit-year-field,
+  .input[type="date"]::-webkit-datetime-edit-month-field,
+  .input[type="date"]::-webkit-datetime-edit-day-field
+
+  /* Keep caret visible and aligned in dark UI */
+  .input, .textarea { caret-color: #fff; }
+
+  /* Optional: slightly larger control height if you want even more breathing room */
+  /* .input, .select, .textarea { @apply h-12; } */
+}
